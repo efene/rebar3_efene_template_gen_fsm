@@ -1,0 +1,37 @@
+fn all @public
+  case:
+    [start_stop, start_send_digit, start_send_correct_digits, start_send_wrong_digits]
+end
+
+fn start_stop @public
+  case _Config:
+    (ok, Pid) = {{name}}.start_link("1234")
+    ok = {{name}}.stop(Pid)
+end
+
+fn start_send_digit @public
+  case _Config:
+    (ok, Pid) = {{name}}.start_link("1234")
+    ok = {{name}}.button(Pid, #c "1")
+    ok = {{name}}.stop(Pid)
+end
+
+fn start_send_correct_digits @public
+  case _Config:
+    (ok, Pid) = {{name}}.start_link("1234")
+    ok = {{name}}.button(Pid, #c "1")
+    ok = {{name}}.button(Pid, #c "2")
+    ok = {{name}}.button(Pid, #c "3")
+    ok = {{name}}.button(Pid, #c "4")
+    ok = {{name}}.stop(Pid)
+end
+
+fn start_send_wrong_digits @public
+  case _Config:
+    (ok, Pid) = {{name}}.start_link("1234")
+    ok = {{name}}.button(Pid, #c "5")
+    ok = {{name}}.button(Pid, #c "6")
+    ok = {{name}}.button(Pid, #c "7")
+    ok = {{name}}.button(Pid, #c "8")
+    ok = {{name}}.stop(Pid)
+end

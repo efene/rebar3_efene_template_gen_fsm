@@ -1,0 +1,67 @@
+@behaviour(gen_fsm)
+
+fn start_link @public
+  case Code:
+    gen_fsm.start_link(#i module, lists.reverse(Code), [])
+end
+
+fn button @public
+  case Ref, Digit:
+    gen_fsm.send_event(Ref, (button, Digit))
+end
+
+fn stop @public
+  case Ref:
+    gen_fsm.send_all_state_event(Ref, stop)
+end
+
+#_ "gen_fsm callbacks"
+
+fn init @public
+  case Code:
+    (ok, locked, ([], Code))
+end
+
+fn locked @public
+  case (button, Digit), (SoFar, Code):
+    match [Digit :: SoFar]:
+      case Code:
+        #_ do_unlock()
+        (next_state, open, ([], Code), 30000)
+      case Incomplete when length(Incomplete) < length(Code):
+        (next_state, locked, (Incomplete, Code))
+      else:
+        (next_state, locked, ([], Code))
+    end
+end
+
+fn open @public
+  case timeout, State:
+    #_ do_lock()
+    (next_state, locked, State)
+end
+
+fn handle_event @public
+  case stop, _StateName, StateData:
+    (stop, normal, StateData)
+end
+
+fn terminate @public
+  case normal, _StateName, _StateData:
+    ok
+end
+
+fn handle_info @public
+  case _Info, _StateName, State:
+    (stop, badmsg, State)
+end
+
+fn handle_sync_event @public
+  case _Event, _From, _StateName, State:
+    (stop, badmsg, State)
+end
+
+fn code_change @public
+  case _OldVsn, StateName, State, _Extra:
+    (ok, StateName, State)
+end

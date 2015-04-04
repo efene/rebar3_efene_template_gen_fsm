@@ -1,0 +1,6 @@
+{description, "Efene gen_fsm module"}.
+{variables, [
+    {name, "mygenfsm", "Name of the module"}
+]}.
+{template, "fn_gen_fsm.fn.dtl", "src/{{name}}.fn"}.
+{template, "fn_gen_fsm_ct.fn.dtl", "test/{{name}}_SUITE.fn"}.
